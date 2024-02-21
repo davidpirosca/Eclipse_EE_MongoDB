@@ -1,0 +1,36 @@
+package mongodb.mongodb;
+
+import com.mongodb.ConnectionString;
+import com.mongodb.client.*;
+import org.bson.Document;
+
+public class App {
+    public static void main(String[] args) {
+        String connectionString = "mongodb+srv://admin:Cx7RUJ1ZtumPg5nQ@cluster0.lydqnpu.mongodb.net/?retryWrites=true&w=majority";
+
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+            // Obtener la base de datos
+            MongoDatabase database = mongoClient.getDatabase("mi_base_de_datos");
+
+            // Obtener la colección
+            MongoCollection<Document> collection = database.getCollection("mi_coleccion");
+
+            // Insertar un documento de ejemplo
+            Document document = new Document("nombre", "Ejemplo")
+                    .append("edad", 30)
+                    .append("ciudad", "EjemploCity");
+
+            collection.insertOne(document);
+
+            // Consultar e imprimir todos los documentos en la colección
+            MongoCursor<Document> cursor = collection.find().iterator();
+            try {
+                while (cursor.hasNext()) {
+                    System.out.println(cursor.next().toJson());
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+    }
+}
